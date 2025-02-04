@@ -9,13 +9,12 @@ import (
 	"time"
 
 	"github.com/VinicciusSantos/golang-microservices/authentication/data"
-
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-const webPort = 9091
+const webPort = "9091"
 
 var counts int64
 
@@ -29,7 +28,7 @@ func main() {
 
 	conn := connectToDB()
 	if conn == nil {
-		log.Panic("Could not connect to Postgres")
+		log.Panic("Can't connect to Postgres!")
 	}
 
 	app := Config{
@@ -38,47 +37,50 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", webPort),
+		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
 
-	if err := srv.ListenAndServe(); err != nil {
-		log.Panic("server failed to start:", err)
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Panic(err)
 	}
 }
 
-func openDB(dsn string) (db *sql.DB, err error) {
-	if db, err = sql.Open("pgx", dsn); err != nil {
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", dsn)
+	if err != nil {
 		return nil, err
 	}
 
-	if err = db.Ping(); err != nil {
+	err = db.Ping()
+	if err != nil {
 		return nil, err
 	}
 
-	return
+	return db, nil
 }
 
 func connectToDB() *sql.DB {
-	const MAX_RETRIES = 10
+	dsn := os.Getenv("DSN")
 
 	for {
-		db, err := openDB(os.Getenv("DSN"))
-
+		connection, err := openDB(dsn)
 		if err != nil {
-			log.Println("Postgres not yet ready")
+			log.Println("Postgres not yet ready ...")
 			counts++
 		} else {
-			log.Println("Connected to Postgres")
-			return db
+			log.Println("Connected to Postgres!")
+			return connection
 		}
 
-		if counts > MAX_RETRIES {
-			log.Println("Could not connect to Postgres")
+		if counts > 10 {
+			log.Println(err)
 			return nil
 		}
 
-		log.Println("backing off for two seconds")
+		log.Println("Backing off for two seconds....")
 		time.Sleep(2 * time.Second)
+		continue
 	}
 }

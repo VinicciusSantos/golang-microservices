@@ -50,7 +50,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		err          error
 	)
 
-	if request, err = http.NewRequest(http.MethodPost, "http://authentication-service/authenticate", bytes.NewBuffer(jsonData)); err != nil {
+	if request, err = http.NewRequest(http.MethodPost, "http://authentication-service:9091/authenticate", bytes.NewBuffer(jsonData)); err != nil {
 		app.errorJSON(w, err)
 		return
 	}
