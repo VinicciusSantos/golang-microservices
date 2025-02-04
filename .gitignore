@@ -1,2 +1,5 @@
 broker-service/brokerApp
 front-end/frontApp
+authentication-service/authApp
+
+database/postgres
