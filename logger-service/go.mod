@@ -3,6 +3,9 @@ module github.com/VinicciusSantos/golang-microservices/logger-service
 go 1.23.5
 
 require (
+	github.com/go-chi/chi v1.5.5 // indirect
+	github.com/go-chi/chi/v5 v5.2.1 // indirect
+	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
