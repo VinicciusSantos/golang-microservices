@@ -1,5 +1,7 @@
 broker-service/brokerApp
 front-end/frontApp
 authentication-service/authApp
+logger-service/loggerApp
 
 database/postgres
+database/mongo
