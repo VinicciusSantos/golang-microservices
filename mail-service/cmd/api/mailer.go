@@ -32,9 +32,9 @@ type Message struct {
 
 func (m *Mail) SendSMTPMessage(msg Message) (err error) {
 	var (
-		client *mail.SMTPClient
+		client           *mail.SMTPClient
 		formattedMessage string
-		plainMessage string
+		plainMessage     string
 	)
 
 	if msg.From == "" {

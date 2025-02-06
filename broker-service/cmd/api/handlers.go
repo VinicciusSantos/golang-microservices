@@ -144,7 +144,7 @@ func (app *Config) sendMail(w http.ResponseWriter, m MailPayload) {
 		err         error
 	)
 
-	if request, err = http.NewRequest(http.MethodPost, "http://mail-service:9093/mail", bytes.NewBuffer(jsonData)); err != nil {
+	if request, err = http.NewRequest(http.MethodPost, "http://mail-service:9093/send", bytes.NewBuffer(jsonData)); err != nil {
 		app.errorJSON(w, err)
 		return
 	}

@@ -14,8 +14,9 @@ RUN chmod +x /app/mailApp
 # build tiny docker image
 FROM alpine:latest
 
-RUN mkdir /app
+RUN mkdir /templates
 
-COPY --from=builder /app/mailApp /app
+COPY --from=builder /app/mailApp .
+COPY --from=builder /app/templates /templates
 
-CMD [ "/app/mailApp" ]
+CMD [ "/mailApp" ]
