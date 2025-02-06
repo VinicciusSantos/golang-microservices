@@ -84,3 +84,16 @@ services:
     ports:
       - "8025:8025"
       - "1025:1025"
+
+  rabbitmq:
+    image: 'rabbitmq:4.0.5-alpine'
+    ports:
+      - "5672:5672"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - ./database/rabbitmq/:/var/lib/rabbitmq/
