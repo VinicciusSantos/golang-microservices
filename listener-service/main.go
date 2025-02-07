@@ -1,47 +1,41 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math"
-	"net/http"
 	"os"
 	"time"
+
+	"github.com/VinicciusSantos/golang-microservices/listener-service/event"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-const webPort = "9090"
-
-type Config struct {
-	Rabbit *amqp.Connection
-}
-
 func main() {
-	rabbitConn, err := connectRabbitMQ()
-	if err != nil {
+	var (
+		rabbitConn *amqp.Connection
+		consumer   event.Consumer
+		err        error
+	)
+
+	if rabbitConn, err = connect(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
 	defer rabbitConn.Close()
 
-	app := Config{
-		Rabbit: rabbitConn,
+	log.Println("Listening for and consuming RabbitMQ messages...")
+
+	if consumer, err = event.NewConsumer(rabbitConn); err != nil {
+		panic(err)
 	}
 
-	log.Printf("Starting broker service on port %s\n", webPort)
-
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", webPort),
-		Handler: app.routes(),
-	}
-
-	if err = srv.ListenAndServe(); err != nil {
-		log.Fatalf("server failed to start: %v", err)
+	if err = consumer.Listen([]string{"log.INFO", "log.WARNING", "log.ERROR"}); err != nil {
+		log.Println("Failed to listen for messages", err)
 	}
 }
 
-func connectRabbitMQ() (conn *amqp.Connection, err error) {
+func connect() (conn *amqp.Connection, err error) {
 	var (
 		counts  int64
 		backOff = 1 * time.Second

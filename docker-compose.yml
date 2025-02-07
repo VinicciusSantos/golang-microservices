@@ -54,6 +54,15 @@ services:
       MAIL_FROM_NAME: "Mail Service"
       MAIL_FROM_ADDRESS: "mail-service@localhost"
 
+  listener-service:
+    build:
+      context: ./listener-service
+      dockerfile: listener-service.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+
   postgres:
     image: 'postgres:17.2'
     ports:
@@ -84,3 +93,16 @@ services:
     ports:
       - "8025:8025"
       - "1025:1025"
+
+  rabbitmq:
+    image: 'rabbitmq:4.0.5-alpine'
+    ports:
+      - "5672:5672"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - ./database/rabbitmq/:/var/lib/rabbitmq/
