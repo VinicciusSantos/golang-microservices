@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"github.com/VinicciusSantos/golang-microservices/broker-service/cmd/api/event"
 )
 
 type requestPayload struct {
@@ -50,7 +52,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
-		app.logItem(w, requestPayload.Log)
+		app.logEventViaRabbit(w, requestPayload.Log)
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
 	default:
@@ -164,4 +166,32 @@ func (app *Config) sendMail(w http.ResponseWriter, m MailPayload) {
 		Error:   false,
 		Message: "mail sent",
 	})
+}
+
+func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
+	if err := app.pushToQueue(l.Name, l.Data); err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusAccepted, jsonResponse{
+		Error:   false,
+		Message: "logged via rabbit",
+	})
+}
+
+func (app *Config) pushToQueue(name, msg string) (err error) {
+	var (
+		emmiter     event.Emitter
+		jsonData, _ = json.MarshalIndent(LogPayload{
+			Name: name,
+			Data: msg,
+		}, "", "\t")
+	)
+
+	if emmiter, err = event.NewEventEmitter(app.Rabbit); err != nil {
+		return err
+	}
+
+	return emmiter.Push(string(jsonData), "log.INFO")
 }
