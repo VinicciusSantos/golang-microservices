@@ -4,8 +4,6 @@ services:
       context: ./broker-service
       dockerfile: broker-service.dockerfile
     restart: always
-    ports:
-      - "9090:9090"
     deploy:
       mode: replicated
       replicas: 1
@@ -59,6 +57,17 @@ services:
       context: ./listener-service
       dockerfile: listener-service.dockerfile
     restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: front-end.dockerfile
+    restart: always
+    ports:
+      - "8081:8081"
     deploy:
       mode: replicated
       replicas: 1

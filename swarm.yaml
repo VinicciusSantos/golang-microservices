@@ -43,6 +43,12 @@ services:
       MAIL_ENCRYPTION: "none"
       MAIL_FROM_NAME: "Mail Service"
       MAIL_FROM_ADDRESS: "mail-service@localhost"
+  
+  frontend:
+    image: viniciusgue/frontend:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
 
   rabbitmq:
     image: 'rabbitmq:4.0.5-alpine'
