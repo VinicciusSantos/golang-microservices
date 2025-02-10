@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  broker-service:
+    image: viniciusgue/broker-service:1.0.0
+    ports:
+      - "9090:9090"
+    deploy:
+      mode: replicated
+      replicas: 1
+  
+  listener-service:
+    image: viniciusgue/listener-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  authentication-service:
+    image: viniciusgue/authentication-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=password dbname=users sslmode=disable timezone=UTC connect_timeout=5"
+
+  logger-service:
+    image: viniciusgue/logger-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  mail-service:
+    image: viniciusgue/mail-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MAIL_DOMAIN: localhost
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_ENCRYPTION: "none"
+      MAIL_FROM_NAME: "Mail Service"
+      MAIL_FROM_ADDRESS: "mail-service@localhost"
+
+  rabbitmq:
+    image: 'rabbitmq:4.0.5-alpine'
+    deploy:
+      mode: global
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
+
+  mailhog:
+    image: 'mailhog/mailhog:latest'
+    ports:
+      - "8025:8025"
+    deploy:
+      mode: global
+
+  mongo:
+    image: 'mongo:4.4'
+    ports:
+      - "27017:27017"
+    deploy:
+      mode: global
+    environment:
+      MONGO_INITDB_DATABASE: logs
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password  
+    volumes:
+      - ./database/mongo/:/data/db/
+  
+  postgres:
+    image: 'postgres:17.2'
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: global
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users
+    volumes:
+      - ./database/postgres/:/var/lib/postgresql/data/  
