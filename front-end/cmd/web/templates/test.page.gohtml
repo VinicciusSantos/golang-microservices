@@ -48,7 +48,7 @@
         let logGRPCBtn = document.getElementById('logGRPCBtn');
 
         brokerBtn.addEventListener('click', () => {
-            fetch('http:\/\/localhost:9090', { method: 'POST' })
+            fetch('http:\/\/broker-service:9090', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     sent.innerHTML = "Empty post request";
@@ -79,7 +79,7 @@
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
 
-            fetch('http:\/\/localhost:9090/handle', {
+            fetch('http:\/\/broker-service:9090/handle', {
                     method: 'POST',
                     headers,
                     body: JSON.stringify(payload)
@@ -114,7 +114,7 @@
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
 
-            fetch('http:\/\/localhost:9090/handle', {
+            fetch('http:\/\/broker-service:9090/handle', {
                     method: 'POST',
                     headers,
                     body: JSON.stringify(payload)
@@ -151,7 +151,7 @@
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
 
-            fetch('http:\/\/localhost:9090/handle', { method: 'POST', headers, body: JSON.stringify(payload) })
+            fetch('http:\/\/broker-service:9090/handle', { method: 'POST', headers, body: JSON.stringify(payload) })
                 .then(response => response.json())
                 .then(data => {
                     sent.innerHTML = JSON.stringify(payload, null, 4);
@@ -179,7 +179,7 @@
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
 
-            fetch('http:\/\/localhost:9090/log-grpc', {
+            fetch('http:\/\/broker-service:9090/log-grpc', {
                     method: 'POST',
                     headers,
                     body: JSON.stringify(payload)
