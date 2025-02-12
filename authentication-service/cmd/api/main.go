@@ -19,7 +19,8 @@ const webPort = "9091"
 var counts int64
 
 type Config struct {
-	Repo data.Repository
+	Repo   data.Repository
+	Client *http.Client
 }
 
 func main() {
@@ -30,7 +31,9 @@ func main() {
 		log.Panic("Can't connect to Postgres!")
 	}
 
-	app := Config{}
+	app := Config{
+		Client: &http.Client{},
+	}
 	app.setupRepo(conn)
 
 	srv := &http.Server{

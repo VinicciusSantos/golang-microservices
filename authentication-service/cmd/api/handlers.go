@@ -28,7 +28,7 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, jsonResponse{
+	app.writeJSON(w, http.StatusAccepted, jsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Loggend in user %s", user.Email),
 		Data:    user,
